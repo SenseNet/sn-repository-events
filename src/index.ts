@@ -1,2 +1,2 @@
 export * from "./EventHub";
-export * from "./EventModels";
+export * from "./IEventModels";

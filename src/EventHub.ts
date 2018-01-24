@@ -3,7 +3,7 @@ import { ICopyOptions, IDeleteOptions, IPatchOptions, IPostOptions, IPutOptions 
 import { ObservableValue, Trace } from "@sensenet/client-utils";
 import { IDisposable } from "@sensenet/client-utils/dist/Disposable";
 import { ValueObserver } from "@sensenet/client-utils/dist/ValueObserver";
-import { IContentMoved, IContentMoveFailed, ICreated, ICreateFailed, ICustomActionExecuted, ICustomActionFailed, IDeleted, IDeleteFailed, ILoaded, IModificationFailed, IModified } from "./EventModels";
+import { IContentMoved, IContentMoveFailed, ICreated, ICreateFailed, ICustomActionExecuted, ICustomActionFailed, IDeleted, IDeleteFailed, ILoaded, IModificationFailed, IModified } from "./IEventModels";
 
 /**
  * Event hub for sensenet Repository Events
@@ -87,6 +87,7 @@ export class EventHub implements IDisposable {
             Trace.method({
                 object: this.repository,
                 method: this.repository.post,
+                isAsync: true,
                 // Post finished to Content Create
                 onFinished: async (finished) => {
                     const response = await finished.returned;
@@ -106,6 +107,7 @@ export class EventHub implements IDisposable {
             Trace.method({
                 object: this.repository,
                 method: this.repository.patch,
+                isAsync: true,
                 // Patch finished to ContentModified
                 onFinished: async (finished) => {
                     const response = await finished.returned;
@@ -125,6 +127,7 @@ export class EventHub implements IDisposable {
             Trace.method({
                 object: this.repository,
                 method: this.repository.put,
+                isAsync: true,
                 // Put finished to ContentModified
                 onFinished: async (finished) => {
                     const response = await finished.returned;
@@ -144,6 +147,7 @@ export class EventHub implements IDisposable {
             Trace.method({
                 object: this.repository,
                 method: this.repository.delete,
+                isAsync: true,
                 // handle DeleteBatch finished based on the response value
                 onFinished: async (finished) => {
                     const response = await finished.returned;
@@ -187,6 +191,7 @@ export class EventHub implements IDisposable {
             Trace.method({
                 object: this.repository,
                 method: this.repository.copy,
+                isAsync: true,
                 // handle CopyBatch finished based on the response value
                 onFinished: async (finished) => {
                     const response = await finished.returned;
@@ -227,6 +232,7 @@ export class EventHub implements IDisposable {
             Trace.method({
                 object: this.repository,
                 method: this.repository.move,
+                isAsync: true,
                 // handle CopyBatch finished based on the response value
                 onFinished: async (finished) => {
                     const response = await finished.returned;
@@ -240,7 +246,7 @@ export class EventHub implements IDisposable {
 
                     if (response.d.errors.length) {
                         for (const failed of response.d.errors) {
-                            this.onContentCreateFailed.setValue({
+                            this.onContentMoveFailed.setValue({
                                 content: failed.content as IContent,
                                 error: failed.error,
                             });
@@ -257,9 +263,9 @@ export class EventHub implements IDisposable {
                         return isNaN(v as number) ? {Path: v} : {Id: parseInt(v as string, 10)};
                     });
                     for (const c of contents) {
-                        this.onContentCreateFailed.setValue({
+                        this.onContentMoveFailed.setValue({
                             content: c as IContent,
-                            error: error.error,
+                            error,
                         });
                     }
                 },
