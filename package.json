@@ -1,6 +1,6 @@
 {
   "name": "@sensenet/repository-events",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Client side repository event observables for sensenet",
   "main": "dist/index.js",
   "files": [
